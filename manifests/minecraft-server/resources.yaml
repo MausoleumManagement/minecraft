@@ -1,0 +1,187 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: minecraft
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kube-vip.io/loadbalancerIPs: 192.168.14.4
+  labels:
+    app: minecraft
+    app.kubernetes.io/instance: minecraft
+    app.kubernetes.io/name: minecraft
+    app.kubernetes.io/version: 5.1.2
+    chart: minecraft-5.1.2
+    heritage: Helm
+    release: minecraft
+  name: minecraft
+  namespace: minecraft
+spec:
+  ports:
+  - name: minecraft
+    port: 25565
+    protocol: TCP
+    targetPort: minecraft
+  selector:
+    app: minecraft
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: minecraft
+    app.kubernetes.io/instance: minecraft
+    app.kubernetes.io/name: minecraft
+    app.kubernetes.io/version: 5.1.2
+    chart: minecraft-5.1.2
+    heritage: Helm
+    release: minecraft
+  name: minecraft
+  namespace: minecraft
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: minecraft
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: minecraft
+        app.kubernetes.io/instance: minecraft
+        app.kubernetes.io/name: minecraft
+        app.kubernetes.io/version: 5.1.2
+    spec:
+      containers:
+      - env:
+        - name: EULA
+          value: "TRUE"
+        - name: TYPE
+          value: NEOFORGE
+        - name: VERSION
+          value: 1.21.1
+        - name: DIFFICULTY
+          value: easy
+        - name: MODE
+          value: survival
+        - name: MOTD
+          value: Welcome to Minecraft on Kubernetes!
+        - name: LEVEL_TYPE
+          value: DEFAULT
+        - name: LEVEL
+          value: world
+        - name: MODRINTH_DOWNLOAD_DEPENDENCIES
+          value: none
+        - name: MEMORY
+          value: 1024M
+        - name: ENABLE_RCON
+          value: "false"
+        - name: CF_API_KEY
+          valueFrom:
+            secretKeyRef:
+              key: cf-api-key
+              name: minecraft-curseforge
+        - name: CF_PARALLEL_DOWNLOADS
+          value: "4"
+        image: itzg/minecraft-server:latest
+        imagePullPolicy: Always
+        livenessProbe:
+          exec:
+            command:
+            - mc-health
+          failureThreshold: 20
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: minecraft
+        ports:
+        - containerPort: 25565
+          name: minecraft
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - mc-health
+          failureThreshold: 20
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          requests:
+            cpu: 500m
+            memory: 512Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+        stdin: true
+        tty: true
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp
+        - mountPath: /data
+          name: datadir
+        - mountPath: /backups
+          name: backupdir
+          readOnly: true
+      securityContext:
+        fsGroup: 2000
+        runAsGroup: 3000
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      volumes:
+      - emptyDir: {}
+        name: tmp
+      - emptyDir: {}
+        name: datadir
+      - emptyDir: {}
+        name: backupdir
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: minecraft-curseforge
+  namespace: minecraft
+spec:
+  data:
+  - remoteRef:
+      key: kv/nekropolis/minecraft/minecraft-curseforge
+      property: cf-api-key
+    secretKey: cf-api-key
+  refreshInterval: 1h0m0s
+  refreshPolicy: Periodic
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: openbao-backend
+  target:
+    name: minecraft-curseforge
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: minecraft-rcon
+  namespace: minecraft
+spec:
+  data:
+  - remoteRef:
+      key: kv/nekropolis/minecraft/minecraft-rcon
+      property: rcon-password
+    secretKey: rcon-password
+  refreshInterval: 1h0m0s
+  refreshPolicy: Periodic
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: openbao-backend
+  target:
+    name: minecraft-rcon

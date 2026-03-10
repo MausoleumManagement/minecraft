@@ -1,0 +1,26 @@
+# https://github.com/itzg/minecraft-server-charts/blob/master/charts/minecraft/values.yaml
+
+serviceAnnotations:
+  kube-vip.io/loadbalancerIPs: 192.168.14.4
+serviceLabels: {}
+
+minecraftServer:
+  ### BEGIN SERVICE RELATED CONFIG ###
+  # DEPRECATED: use top-level rconServiceAnnotations instead
+  serviceAnnotations: {}
+  serviceType: LoadBalancer
+  ## Set the port used if the serviceType is NodePort
+  servicePort: 25565
+  loadBalancerClass:
+  loadBalancerIP: 192.168.14.10
+  # loadBalancerSourceRanges: []
+
+resources:
+  requests:
+    memory: 512Mi
+    cpu: 500m
+minecraftServer:
+  eula: "TRUE"
+  version: "1.21.1"
+  ## https://docker-minecraft-server.readthedocs.io/en/latest/types-and-platforms
+  type: "NEOFORGE"
