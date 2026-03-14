@@ -7,8 +7,8 @@ serviceLabels: {}
 
 resources:
   requests:
-    memory: 512Mi
-    cpu: 500m
+    memory: 8000M
+    cpu: 2000m
 minecraftServer:
   serviceType: "LoadBalancer"
   servicePort: 25565
