@@ -18,3 +18,13 @@ minecraftServer:
   version: "1.21.1"
   ## https://docker-minecraft-server.readthedocs.io/en/latest/types-and-platforms
   type: "NEOFORGE"
+
+persistence:
+  dataDir:
+    enabled: true
+    Size: 10Gi
+mcbackup:
+  persistence:
+    backupDir:
+      enabled: true
+      Size: 10Gi
