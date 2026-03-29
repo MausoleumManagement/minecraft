@@ -19,11 +19,83 @@ minecraftServer:
   ## https://docker-minecraft-server.readthedocs.io/en/latest/types-and-platforms
   type: "NEOFORGE"
 
+  rcon:
+    enabled: true
+    existingSecret: minecraft-rcon
+    secretKey: rcon-password
+
 persistence:
   dataDir:
     enabled: true
     Size: 10Gi
 mcbackup:
+  enabled: true
+
+  # glob patterns to ignore  during backup creation
+  excludes: "*.jar,cache,logs"
+  pruneBackupsDays: 7
+
+  # TODO: figure out how to pass s3 credentials
+  backupMethod: restic
+
+  # WARN: When using restic and sharing the `mcbackup.resticRepository` across multiple minecraft server deployments: either `mcbackup.backupName` or `mcbackup.resticHostname` must be unique!
+  # Sets `BACKUP_NAME`, defaults to `minecraftServer.worldSaveName`
+  backupName: bobworld
+  # Required because the container hostname changes on every recreate of the pod which prevents restic from pruning snapshots from previous pods/hostnames
+  # Sets `RESTIC_HOSTNAME`
+  resticHostname: bobserver
+
+
+  resticRepository: "s3:https://placeholder.irminsul/BUCKET_NAME/minecraft"
+  # variable to define a space separated list of additional restic tags. see https://hub.docker.com/r/itzg/mc-backup
+  resticAdditionalTags: "mc_backups"
+  # see https://restic.readthedocs.io/en/latest/060_forget.html
+  pruneResticRetention: "--keep-daily 7 --keep-weekly 5 --keep-monthly 12 --keep-yearly 75"
+
+  resticEnvs:
+    RESTIC_PASSWORD:
+      valueFrom:
+        secretKeyRef:
+          name: minecraft-restic
+          key: restic-password
+    AWS_ACCESS_KEY_ID:
+      valueFrom:
+        secretKeyRef:
+          name: minecraft-restic
+          key: aws-access-key-id
+    AWS_SECRET_ACCESS_KEY:
+      valueFrom:
+        secretKeyRef:
+          name: minecraft-restic
+          key: aws-secret-access-key
+
+  ## Additional minecraft container environment variables
+  ## Values can be either variable values or `valueFrom` yaml
+  ##
+  #extraEnv:
+  #  {}
+    # some_variable: some value
+    # another_variable:
+    #   valueFrom:
+    #     fieldRef:
+    #       fieldPath: status.hostIP
+
+  ## Additional environment variables to add to the mc-backup container from
+  ## ConfigMaps and Secrets
+  ##
+  envFrom: []
+
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 500m
+
+  repository: itzg/mc-backup
+  # TODO: using the latest image is the default, but not cool
+  tag: latest
+  pullPolicy: IfNotPresent
+
+
   persistence:
     backupDir:
       enabled: true

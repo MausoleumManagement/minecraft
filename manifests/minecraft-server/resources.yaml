@@ -29,6 +29,29 @@ spec:
   type: LoadBalancer
 ---
 apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: minecraft
+    app.kubernetes.io/instance: minecraft
+    app.kubernetes.io/name: minecraft
+    app.kubernetes.io/version: 5.1.2
+    chart: minecraft-5.1.2
+    heritage: Helm
+    release: minecraft
+  name: minecraft-rcon
+  namespace: minecraft
+spec:
+  ports:
+  - name: rcon
+    port: 25575
+    protocol: TCP
+    targetPort: rcon
+  selector:
+    app: minecraft
+  type: ClusterIP
+---
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   annotations:
@@ -124,7 +147,12 @@ spec:
         - name: MEMORY
           value: 1024M
         - name: ENABLE_RCON
-          value: "false"
+          value: "true"
+        - name: RCON_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: rcon-password
+              name: minecraft-rcon
         - name: CF_API_KEY
           valueFrom:
             secretKeyRef:
@@ -147,6 +175,9 @@ spec:
         ports:
         - containerPort: 25565
           name: minecraft
+          protocol: TCP
+        - containerPort: 25575
+          name: rcon
           protocol: TCP
         readinessProbe:
           exec:
@@ -177,6 +208,82 @@ spec:
         - mountPath: /backups
           name: backupdir
           readOnly: true
+      - env:
+        - name: SRC_DIR
+          value: /data
+        - name: BACKUP_NAME
+          value: bobworld
+        - name: INITIAL_DELAY
+          value: 2m
+        - name: BACKUP_INTERVAL
+          value: 24h
+        - name: PRUNE_BACKUPS_DAYS
+          value: "7"
+        - name: PAUSE_IF_NO_PLAYERS
+          value: "false"
+        - name: SERVER_PORT
+          value: "25565"
+        - name: RCON_HOST
+          value: localhost
+        - name: RCON_PORT
+          value: "25575"
+        - name: RCON_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: rcon-password
+              name: minecraft-rcon
+        - name: RCON_RETRIES
+          value: "5"
+        - name: RCON_RETRY_INTERVAL
+          value: 10s
+        - name: EXCLUDES
+          value: '*.jar,cache,logs'
+        - name: BACKUP_METHOD
+          value: restic
+        - name: RESTIC_REPOSITORY
+          value: s3:https://placeholder.irminsul/BUCKET_NAME/minecraft
+        - name: RESTIC_ADDITIONAL_TAGS
+          value: mc_backups
+        - name: PRUNE_RESTIC_RETENTION
+          value: --keep-daily 7 --keep-weekly 5 --keep-monthly 12 --keep-yearly 75
+        - name: RESTIC_HOSTNAME
+          value: bobserver
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: aws-access-key-id
+              name: minecraft-restic
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: aws-secret-access-key
+              name: minecraft-restic
+        - name: RESTIC_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: restic-password
+              name: minecraft-restic
+        image: itzg/mc-backup:latest
+        imagePullPolicy: IfNotPresent
+        name: minecraft-mc-backup
+        resources:
+          requests:
+            cpu: 500m
+            memory: 512Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp
+        - mountPath: /data
+          name: datadir
+          readOnly: true
+        - mountPath: /backups
+          name: backupdir
       securityContext:
         fsGroup: 2000
         runAsGroup: 3000
@@ -190,8 +297,9 @@ spec:
       - name: datadir
         persistentVolumeClaim:
           claimName: minecraft-datadir
-      - emptyDir: {}
-        name: backupdir
+      - name: backupdir
+        persistentVolumeClaim:
+          claimName: minecraft-backupdir
 ---
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
@@ -230,3 +338,30 @@ spec:
     name: openbao-backend
   target:
     name: minecraft-rcon
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: minecraft-restic
+  namespace: minecraft
+spec:
+  data:
+  - remoteRef:
+      key: kv/nekropolis/minecraft/minecraft-restic
+      property: restic-password
+    secretKey: restic-password
+  - remoteRef:
+      key: kv/nekropolis/minecraft/minecraft-restic
+      property: aws-access-key-id
+    secretKey: aws-access-key-id
+  - remoteRef:
+      key: kv/nekropolis/minecraft/minecraft-restic
+      property: aws-secret-access-key
+    secretKey: aws-secret-access-key
+  refreshInterval: 1h0m0s
+  refreshPolicy: Periodic
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: openbao-backend
+  target:
+    name: minecraft-restic
