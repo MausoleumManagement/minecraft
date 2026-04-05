@@ -241,7 +241,7 @@ spec:
         - name: BACKUP_METHOD
           value: restic
         - name: RESTIC_REPOSITORY
-          value: s3:https://placeholder.irminsul/BUCKET_NAME/minecraft
+          value: s3:http://garage.irminsul:3900/minecraft-backups/restic
         - name: RESTIC_ADDITIONAL_TAGS
           value: mc_backups
         - name: PRUNE_RESTIC_RETENTION

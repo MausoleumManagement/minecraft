@@ -46,7 +46,8 @@ mcbackup:
   resticHostname: bobserver
 
 
-  resticRepository: "s3:https://placeholder.irminsul/BUCKET_NAME/minecraft"
+  # TODO: we want to use HTTPS
+  resticRepository: "s3:http://garage.irminsul:3900/minecraft-backups/restic"
   # variable to define a space separated list of additional restic tags. see https://hub.docker.com/r/itzg/mc-backup
   resticAdditionalTags: "mc_backups"
   # see https://restic.readthedocs.io/en/latest/060_forget.html
