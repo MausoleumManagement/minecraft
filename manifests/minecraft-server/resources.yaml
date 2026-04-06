@@ -142,10 +142,12 @@ spec:
           value: DEFAULT
         - name: LEVEL
           value: world
+        - name: MODPACK
+          value: http://minecraft-modpacks.garage.irminsul:3902/All_the_Mods_10-6.4.zip
         - name: MODRINTH_DOWNLOAD_DEPENDENCIES
           value: none
         - name: MEMORY
-          value: 1024M
+          value: 16000M
         - name: ENABLE_RCON
           value: "true"
         - name: RCON_PASSWORD
@@ -160,6 +162,8 @@ spec:
               name: minecraft-curseforge
         - name: CF_PARALLEL_DOWNLOADS
           value: "4"
+        - name: USE_AIKAR_FLAGS
+          value: "true"
         image: itzg/minecraft-server:latest
         imagePullPolicy: Always
         livenessProbe:
@@ -191,7 +195,7 @@ spec:
         resources:
           requests:
             cpu: 2000m
-            memory: 8000M
+            memory: 18000M
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:

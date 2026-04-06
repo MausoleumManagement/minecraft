@@ -7,9 +7,26 @@ serviceLabels: {}
 
 resources:
   requests:
-    memory: 8000M
+    memory: 18000M
     cpu: 2000m
+
+# apparently the container does some magic to correctly adjust these flags based on memory available
+# https://docker-minecraft-server.readthedocs.io/en/latest/configuration/jvm-options/#enable-aikars-flags
+extraEnv:
+  USE_AIKAR_FLAGS: "true"
+
 minecraftServer:
+  # this is used to derive the -Xms and -Xmx values from one value
+  # neat idea, but we want to mess with the JVM options anyway, so lets just do it all
+  # in one place
+  memory: 16000M
+
+  # TODO: Set these properly without the cutesy wrappers provided by the image
+  jvmOpts:
+  # the chart dev felt like separating XX Options out was appropriate
+  jvmXXopts:
+
+
   serviceType: "LoadBalancer"
   servicePort: 25565
   #loadBalancerIP: 192.168.14.10
@@ -18,6 +35,8 @@ minecraftServer:
   version: "1.21.1"
   ## https://docker-minecraft-server.readthedocs.io/en/latest/types-and-platforms
   type: "NEOFORGE"
+
+  downloadModpackUrl: "http://minecraft-modpacks.garage.irminsul:3902/All_the_Mods_10-6.4.zip"
 
   rcon:
     enabled: true
