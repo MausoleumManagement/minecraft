@@ -245,7 +245,7 @@ spec:
         - name: RESTIC_ADDITIONAL_TAGS
           value: mc_backups
         - name: PRUNE_RESTIC_RETENTION
-          value: --keep-daily 7 --keep-weekly 5 --keep-monthly 12 --keep-yearly 75
+          value: --keep-within 7d --keep-weekly 5 --keep-monthly 6
         - name: RESTIC_HOSTNAME
           value: bobserver
         - name: AWS_ACCESS_KEY_ID

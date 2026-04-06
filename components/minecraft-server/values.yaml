@@ -51,7 +51,7 @@ mcbackup:
   # variable to define a space separated list of additional restic tags. see https://hub.docker.com/r/itzg/mc-backup
   resticAdditionalTags: "mc_backups"
   # see https://restic.readthedocs.io/en/latest/060_forget.html
-  pruneResticRetention: "--keep-daily 7 --keep-weekly 5 --keep-monthly 12 --keep-yearly 75"
+  pruneResticRetention: "--keep-within 7d --keep-weekly 5 --keep-monthly 6"
 
   resticEnvs:
     RESTIC_PASSWORD:
