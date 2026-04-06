@@ -93,7 +93,7 @@ spec:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 10Gi
+      storage: 20Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -142,8 +142,6 @@ spec:
           value: DEFAULT
         - name: LEVEL
           value: world
-        - name: MODPACK
-          value: http://minecraft-modpacks.garage.irminsul:3902/All_the_Mods_10-6.4.zip
         - name: MODRINTH_DOWNLOAD_DEPENDENCIES
           value: none
         - name: MEMORY
@@ -162,6 +160,8 @@ spec:
               name: minecraft-curseforge
         - name: CF_PARALLEL_DOWNLOADS
           value: "4"
+        - name: GENERIC_PACK
+          value: http://minecraft-modpacks.garage.irminsul:3902/All_the_Mods_10-6.4_ServerFiles.zip
         - name: USE_AIKAR_FLAGS
           value: "true"
         image: itzg/minecraft-server:latest
@@ -171,7 +171,7 @@ spec:
             command:
             - mc-health
           failureThreshold: 20
-          initialDelaySeconds: 30
+          initialDelaySeconds: 600
           periodSeconds: 5
           successThreshold: 1
           timeoutSeconds: 1
@@ -188,7 +188,7 @@ spec:
             command:
             - mc-health
           failureThreshold: 20
-          initialDelaySeconds: 30
+          initialDelaySeconds: 600
           periodSeconds: 5
           successThreshold: 1
           timeoutSeconds: 1
@@ -218,7 +218,7 @@ spec:
         - name: BACKUP_NAME
           value: bobworld
         - name: INITIAL_DELAY
-          value: 2m
+          value: 10m
         - name: BACKUP_INTERVAL
           value: 24h
         - name: PRUNE_BACKUPS_DAYS

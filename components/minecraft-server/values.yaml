@@ -14,6 +14,35 @@ resources:
 # https://docker-minecraft-server.readthedocs.io/en/latest/configuration/jvm-options/#enable-aikars-flags
 extraEnv:
   USE_AIKAR_FLAGS: "true"
+  # the AllTheMods zipfile for servers seems to not work with downloadModpackUrl
+  # https://docker-minecraft-server.readthedocs.io/en/latest/mods-and-plugins/#generic-pack-files
+  GENERIC_PACK: "http://minecraft-modpacks.garage.irminsul:3902/All_the_Mods_10-6.4_ServerFiles.zip"
+
+# Most of these map to environment variables. See Minecraft for details:
+# https://hub.docker.com/r/itzg/minecraft-server/
+# since we use a big  modpack, we need to give the server some time to start
+livenessProbe:
+#  command:
+#    - mc-health
+  initialDelaySeconds: 600
+#  periodSeconds: 5
+#  failureThreshold: 20
+#  successThreshold: 1
+#  timeoutSeconds: 1
+readinessProbe:
+#  command:
+#    - mc-health
+  initialDelaySeconds: 600
+#  periodSeconds: 5
+#  failureThreshold: 20
+#  successThreshold: 1
+#  timeoutSeconds: 1
+#startupProbe:
+#  command:
+#    - mc-health
+#  enabled: false
+#  failureThreshold: 30
+#  periodSeconds: 1
 
 minecraftServer:
   # this is used to derive the -Xms and -Xmx values from one value
@@ -36,7 +65,7 @@ minecraftServer:
   ## https://docker-minecraft-server.readthedocs.io/en/latest/types-and-platforms
   type: "NEOFORGE"
 
-  downloadModpackUrl: "http://minecraft-modpacks.garage.irminsul:3902/All_the_Mods_10-6.4.zip"
+  #downloadModpackUrl: "http://minecraft-modpacks.garage.irminsul:3902/All_the_Mods_10-6.4_ServerFiles.zip"
 
   rcon:
     enabled: true
@@ -46,9 +75,13 @@ minecraftServer:
 persistence:
   dataDir:
     enabled: true
-    Size: 10Gi
+    Size: 20Gi
 mcbackup:
   enabled: true
+  
+  # if the backup sidecar can not reach the main container within this time period
+  # the sidecar will error out, restarting the whole pod
+  initialDelay: 10m
 
   # glob patterns to ignore  during backup creation
   excludes: "*.jar,cache,logs"
