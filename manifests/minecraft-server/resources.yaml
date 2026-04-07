@@ -160,8 +160,6 @@ spec:
               name: minecraft-curseforge
         - name: CF_PARALLEL_DOWNLOADS
           value: "4"
-        - name: GENERIC_PACK
-          value: http://minecraft-modpacks.garage.irminsul:3902/All_the_Mods_10-6.4_ServerFiles.zip
         - name: USE_AIKAR_FLAGS
           value: "true"
         image: itzg/minecraft-server:latest

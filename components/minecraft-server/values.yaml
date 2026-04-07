@@ -16,7 +16,8 @@ extraEnv:
   USE_AIKAR_FLAGS: "true"
   # the AllTheMods zipfile for servers seems to not work with downloadModpackUrl
   # https://docker-minecraft-server.readthedocs.io/en/latest/mods-and-plugins/#generic-pack-files
-  GENERIC_PACK: "http://minecraft-modpacks.garage.irminsul:3902/All_the_Mods_10-6.4_ServerFiles.zip"
+  # TODO: fix; commented out to debug startup issue with already installed modpack
+  #GENERIC_PACK: "http://minecraft-modpacks.garage.irminsul:3902/All_the_Mods_10-6.4_ServerFiles.zip"
 
 # Most of these map to environment variables. See Minecraft for details:
 # https://hub.docker.com/r/itzg/minecraft-server/
