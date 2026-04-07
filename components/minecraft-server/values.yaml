@@ -8,7 +8,7 @@ serviceLabels: {}
 resources:
   requests:
     memory: 18000M
-    cpu: 2000m
+    cpu: 6000m
 
 # apparently the container does some magic to correctly adjust these flags based on memory available
 # https://docker-minecraft-server.readthedocs.io/en/latest/configuration/jvm-options/#enable-aikars-flags
