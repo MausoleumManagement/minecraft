@@ -168,8 +168,8 @@ spec:
           exec:
             command:
             - mc-health
-          failureThreshold: 20
-          initialDelaySeconds: 600
+          failureThreshold: 80
+          initialDelaySeconds: 300
           periodSeconds: 5
           successThreshold: 1
           timeoutSeconds: 1
@@ -185,8 +185,8 @@ spec:
           exec:
             command:
             - mc-health
-          failureThreshold: 20
-          initialDelaySeconds: 600
+          failureThreshold: 80
+          initialDelaySeconds: 300
           periodSeconds: 5
           successThreshold: 1
           timeoutSeconds: 1
