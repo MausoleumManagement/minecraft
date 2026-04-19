@@ -220,9 +220,7 @@ spec:
         - name: INITIAL_DELAY
           value: 10m
         - name: BACKUP_INTERVAL
-          value: 24h
-        - name: PRUNE_BACKUPS_DAYS
-          value: "7"
+          value: 60m
         - name: PAUSE_IF_NO_PLAYERS
           value: "false"
         - name: SERVER_PORT
@@ -249,7 +247,7 @@ spec:
         - name: RESTIC_ADDITIONAL_TAGS
           value: mc_backups
         - name: PRUNE_RESTIC_RETENTION
-          value: --keep-within 7d --keep-weekly 5 --keep-monthly 6
+          value: --keep-hourly 6 --keep-daily 7 --keep-weekly 5 --keep-monthly 6
         - name: RESTIC_HOSTNAME
           value: bobserver
         - name: AWS_ACCESS_KEY_ID

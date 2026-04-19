@@ -88,7 +88,10 @@ mcbackup:
 
   # glob patterns to ignore  during backup creation
   excludes: "*.jar,cache,logs"
-  pruneBackupsDays: 7
+
+  # we leave this up to restic, so we unset the default of 7
+  pruneBackupsDays:
+  backupInterval: 60m
 
   # TODO: figure out how to pass s3 credentials
   backupMethod: restic
@@ -106,7 +109,7 @@ mcbackup:
   # variable to define a space separated list of additional restic tags. see https://hub.docker.com/r/itzg/mc-backup
   resticAdditionalTags: "mc_backups"
   # see https://restic.readthedocs.io/en/latest/060_forget.html
-  pruneResticRetention: "--keep-within 7d --keep-weekly 5 --keep-monthly 6"
+  pruneResticRetention: "--keep-hourly 6 --keep-daily 7 --keep-weekly 5 --keep-monthly 6"
 
   resticEnvs:
     RESTIC_PASSWORD:
