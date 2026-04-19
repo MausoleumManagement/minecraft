@@ -50,9 +50,9 @@ restic snapshots
 Restore snapshot and replace the necessary files (in this example, we just replace the `world` subdirectory, i.e. the minecraft world state). Since we took a snapshot before, we do not bother with storing the old world state.
 
 ```bash
-restic restore ed888d6b --target /backups/restore20260406
+restic restore aaaaaa --target /backups/restore
 rm -rf /data/world/
-mv /backups/restore20260406/data/world/ /data/
+mv /backups/restore/data/world/ /data/
 rm -rf /backups/*
 ```
 
