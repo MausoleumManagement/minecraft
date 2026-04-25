@@ -137,7 +137,7 @@ spec:
         - name: MODE
           value: survival
         - name: MOTD
-          value: Welcome to Minecraft on Kubernetes!
+          value: Bem-vindo a fazenda de os lindinhos
         - name: PVP
           value: "false"
         - name: LEVEL_TYPE
