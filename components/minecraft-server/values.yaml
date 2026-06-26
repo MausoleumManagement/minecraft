@@ -79,7 +79,7 @@ minecraftServer:
 persistence:
   dataDir:
     enabled: true
-    Size: 20Gi
+    Size: 60Gi
 mcbackup:
   enabled: true
   
@@ -159,4 +159,4 @@ mcbackup:
   persistence:
     backupDir:
       enabled: true
-      Size: 10Gi
+      Size: 70Gi
