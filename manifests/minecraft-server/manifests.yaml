@@ -313,7 +313,10 @@ metadata:
 spec:
   data:
   - remoteRef:
+      conversionStrategy: Default
+      decodingStrategy: None
       key: kv/nekropolis/minecraft/minecraft-curseforge
+      metadataPolicy: None
       property: cf-api-key
     secretKey: cf-api-key
   refreshInterval: 1h0m0s
@@ -332,7 +335,10 @@ metadata:
 spec:
   data:
   - remoteRef:
+      conversionStrategy: Default
+      decodingStrategy: None
       key: kv/nekropolis/minecraft/minecraft-rcon
+      metadataPolicy: None
       property: rcon-password
     secretKey: rcon-password
   refreshInterval: 1h0m0s
@@ -351,15 +357,24 @@ metadata:
 spec:
   data:
   - remoteRef:
+      conversionStrategy: Default
+      decodingStrategy: None
       key: kv/nekropolis/minecraft/minecraft-restic
+      metadataPolicy: None
       property: restic-password
     secretKey: restic-password
   - remoteRef:
+      conversionStrategy: Default
+      decodingStrategy: None
       key: kv/nekropolis/minecraft/minecraft-restic
+      metadataPolicy: None
       property: aws-access-key-id
     secretKey: aws-access-key-id
   - remoteRef:
+      conversionStrategy: Default
+      decodingStrategy: None
       key: kv/nekropolis/minecraft/minecraft-restic
+      metadataPolicy: None
       property: aws-secret-access-key
     secretKey: aws-secret-access-key
   refreshInterval: 1h0m0s
